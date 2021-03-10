@@ -10,7 +10,7 @@ services:
   ckan:
     container_name: ckan
     build: 
-      context: ../
+      context: .
       dockerfile: Dockerfile
     networks:
       - frontend
