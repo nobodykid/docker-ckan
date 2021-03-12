@@ -55,7 +55,7 @@ services:
   db:
     container_name: db
     build:
-      context: .
+      context: ../../compose
       dockerfile: postgresql/Dockerfile
       args:
         - DS_RO_PASS=${DATASTORE_READONLY_PASSWORD}
@@ -73,7 +73,7 @@ services:
   solr:
     container_name: solr
     build:
-      context: .
+      context: ../../compose
       dockerfile: solr/Dockerfile
       args:
         - CKAN_VERSION=${CKAN_VERSION}

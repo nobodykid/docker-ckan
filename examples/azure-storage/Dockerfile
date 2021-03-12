@@ -12,9 +12,15 @@ RUN apk add --no-cache python3-dev
 # Locations and tags of additional CKAN extensions
 # ENV CLOUDSTORAGE_GIT_URL=https://github.com/open-data/ckanext-cloudstorage
 ENV CLOUDSTORAGE_GIT_URL=https://github.com/TkTech/ckanext-cloudstorage
+ENV PULL_BRANCH_NAME=py3-support
+
+# Locally clone ckanext-cloudstorage, apply https://github.com/TkTech/ckanext-cloudstorage/pull/42
+RUN git clone ${CLOUDSTORAGE_GIT_URL} && cd ckanext-cloudstorage \
+    git fetch origin pull/42/head:${PULL_BRANCH_NAME} && git checkout ${PULL_BRANCH_NAME} && \
+    pip wheel --wheel-dir=/wheels .
 
 # Fetch and build the custom CKAN extensions
-RUN pip wheel --wheel-dir=/wheels git+${CLOUDSTORAGE_GIT_URL}
+# RUN pip wheel --wheel-dir=/wheels git+${CLOUDSTORAGE_GIT_URL}
 
 ############
 ### MAIN ###
@@ -30,7 +36,7 @@ USER root
 COPY --from=extbuild /wheels /srv/app/ext_wheels
 
 # Install and enable the custom extensions
-RUN pip install --no-index --find-links=/srv/app/ext_wheels ckanext-disqus && \
+RUN pip install --no-index --find-links=/srv/app/ext_wheels ckanext-cloudstorage && \
     ckan config-tool ${APP_DIR}/production.ini "ckan.plugins = ${CKAN__PLUGINS}" && \
     chown -R ckan:ckan /srv/app
 
